@@ -388,3 +388,19 @@ while True:
 		if dist(p1, p2) <= 1:
 			break # Winning condition
 	levelIndex = (levelIndex + 1) % len(levelFiles)
+
+while True:
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			sys.exit()
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_ESCAPE:
+				sys.exit()
+	#screen.fill((255, 255, 255))
+	screen.fill((0, 0, 0))
+	#Write credits here
+	myfont = pygame.font.SysFont("Verdana", 24)
+	label = myfont.render("We finally met dude! :D", 1, (255, 255, 255))
+	screen.blit(label, (100, 0))
+	pygame.display.flip()
+
