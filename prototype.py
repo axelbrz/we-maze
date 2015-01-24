@@ -49,7 +49,7 @@ def loadMaze(maze):
 	p1 = None
 	p2 = None
 	print "--"
-	m = maze.split("\n")[1:-1]
+	m = maze.split("\n")[0:-1]
 	for y in xrange(len(m)):
 		x1 = m[y].find("1")
 		x2 = m[y].find("2")
@@ -108,29 +108,16 @@ def alterMaze():
 				m[torem[1]][torem[0]] = "X"
 				m[toadd[1]][toadd[0]] = " "
 
+if len(sys.argv) != 2:
+	levelFile = "normal.txt"
+else:
+	levelFile = sys.argv[1]
+
 pygame.init()
 pygame.display.set_caption('we maze! (prototype)')
 
-maze = """
-XXXXXXXXXXXXXXXXX
-X1          X   X
-X X XXXXX X X X X
-X X X     X   X X
-X X X XXXXXXXXX X
-X   X         X X
-XXX X X XXXXX X X
-X X X X X   X X X
-X X     X X   X X
-X XXXXX X XXXXX X
-X       X X   X X
-XXXXXXXXX X X XXX
-X   X     X X X X
-X X XXXXX X X X X
-X X X     X X   X
-X XXX XXXXX XXXXX
-X              2X
-XXXXXXXXXXXXXXXXX
-"""
+with open(levelFile) as f:
+	maze = f.read()
 
 p1 = None
 p2 = None
