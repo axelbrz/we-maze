@@ -256,4 +256,5 @@ while True:
 		pygame.draw.circle(screen, (0,0,255), (int(d2[0] * wallsize + wallsize / 2 - 1), int(d2[1] * wallsize + wallsize / 2 - 1)), int(wallsize / 2 * 0.8))
 		
 		pygame.display.flip()
-		
+		if dist(p1, p2) <= 1:
+			break # Winning condition
