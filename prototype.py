@@ -44,11 +44,22 @@ def bfs_p2_to_p1():
 def bfs_p1_to_p2():
 	return bfs((p1[0], p1[1]), (p2[0], p2[1]))
 
-def loadMaze(maze):
-	global p1, p2, m
 
+def loadMaze(maze):
+	global p1, p2, m, images
+	
 	p1 = None
 	p2 = None
+	images = []
+	imagePool = [
+		#edificio_1,
+		#edificio_2,
+		edificio_3,
+		edificio_4,
+		edificio_5,
+		edificio_6,
+		plaza,
+	]
 	print "--"
 	m = maze.split("\n")[0:-1]
 	for y in xrange(len(m)):
@@ -58,6 +69,7 @@ def loadMaze(maze):
 		if x2 >= 0: p2 = [x2, y]
 		m[y] = m[y].replace("1", " ")
 		m[y] = m[y].replace("2", " ")
+		images.append([random.choice(imagePool) for x in xrange(len(m[0]))])
 		print "".join(m[y])
 	print "--"
 	print "Dimensiones", (len(m[0]), len(m))
@@ -160,6 +172,19 @@ def drawAsfalto(x, y):
 	if img:
 		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
 
+def drawBuilding(x, y):
+	pos = getDrawPos(x, y)
+	img = None
+	#img, img_size = pygame.transform.rotate(asfalto_linea, 90), asfalto_size
+	img, img_size = images[y][x], asfalto_size
+	if img:
+		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
+
+def loadImage(filename):
+	global imagesPath, wallsize
+	img = pygame.image.load(imagesPath + filename)
+	return pygame.transform.scale(img, (wallsize, wallsize))
+
 imagesPath = "images/"
 audioPath = "audio/"
 levelsPath = "levels/"
@@ -187,7 +212,7 @@ p1 = None
 p2 = None
 dir1 = [1, 0]
 dir2 = [-1, 0]
-
+images = []
 
 t_anim = 0.1
 steps_to_alter_maze = 5
@@ -204,31 +229,30 @@ bulletMode = True
 levelIndex = 0
 
 while True:
+	wallsize = 32
+	
+	asfalto_linea = loadImage("asfalto_linea.png")
+	asfalto_esquina = loadImage("asfalto_esquina.png")
+	asfalto_cruz = loadImage("asfalto_cruz.png")
+	asfalto_t = loadImage("asfalto_t.png")
+	asfalto_fin = loadImage("asfalto_fin.png")
+	
+	asfalto_size = asfalto_linea.get_size()
+	
+	edificio_1 = loadImage("edificio_1.png")
+	edificio_2 = loadImage("edificio_2.png")
+	edificio_3 = loadImage("edificio_3.png")
+	edificio_4 = loadImage("edificio_4.png")
+	edificio_5 = loadImage("edificio_5.png")
+	edificio_6 = loadImage("edificio_6.png")
+	plaza = loadImage("plaza.png")
+	
 	levelFile = levelsPath + levelFiles[levelIndex]
 	print levelFile
 	with open(levelFile) as f:
 		maze = f.read()
 	m = []
 	loadMaze(maze)
-	
-	wallsize = 32
-	
-	asfalto_linea = pygame.image.load(imagesPath + "asfalto_linea.png")
-	asfalto_linea = pygame.transform.scale(asfalto_linea, (wallsize, wallsize))
-	
-	asfalto_esquina = pygame.image.load(imagesPath + "asfalto_esquina.png")
-	asfalto_esquina = pygame.transform.scale(asfalto_esquina, (wallsize, wallsize))
-	
-	asfalto_cruz = pygame.image.load(imagesPath + "asfalto_cruz.png")
-	asfalto_cruz = pygame.transform.scale(asfalto_cruz, (wallsize, wallsize))
-	
-	asfalto_t = pygame.image.load(imagesPath + "asfalto_t.png")
-	asfalto_t = pygame.transform.scale(asfalto_t, (wallsize, wallsize))
-	
-	asfalto_fin = pygame.image.load(imagesPath + "asfalto_fin.png")
-	asfalto_fin = pygame.transform.scale(asfalto_fin, (wallsize, wallsize))
-	
-	asfalto_size = asfalto_linea.get_size()
 	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
 	print "Screen size", size
@@ -323,7 +347,8 @@ while True:
 			for x in xrange(len(m[0])):
 				pos = getDrawPos(x, y)
 				if filled(x, y):
-					pygame.draw.rect(screen, (0, 0, 0), pos)
+					#pygame.draw.rect(screen, (0, 0, 0), pos)
+					drawBuilding(x, y)
 				else:
 					drawAsfalto(x, y)
 		
