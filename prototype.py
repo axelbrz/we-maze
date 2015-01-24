@@ -157,14 +157,17 @@ def drawAsfalto(x, y):
 	
 	if img:
 		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
-				
+
+imagesPath = "images/"
+levelsPath = "levels/"
+
 if len(sys.argv) != 2:
-	levelFile = "normal.txt"
+	levelFile = levelsPath + "normal.txt"
 else:
-	levelFile = sys.argv[1]
+	levelFile = levelsPath + sys.argv[1]
 
 pygame.init()
-pygame.display.set_caption('we maze! (prototype)')
+pygame.display.set_caption('We Maze!')
 
 with open(levelFile) as f:
 	maze = f.read()
@@ -186,9 +189,6 @@ showBotPath2 = False
 steps = 0
 
 bulletMode = True
-
-imagesPath = "images/"
-
 
 
 while True:
