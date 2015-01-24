@@ -1,7 +1,7 @@
 OOOOOO
 O2   O
-OOOO O
+OXOO O
 O    O
-O OOOO
+O OOXO
 O   1O
 OOOOOO
