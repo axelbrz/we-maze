@@ -72,7 +72,7 @@ def empty(x, y):
 def filled(x, y):
 	global m
 	if x < 0 or y < 0 or x >= len(m[0]) or y >= len(m): return False
-	return m[y][x] == "X"
+	return m[y][x] == "X" or m[y][x] == "O"
 
 def isMovable(c):
 	if empty(c[0], c[1]-1) and empty(c[0], c[1]+1):
@@ -92,7 +92,8 @@ def alterMaze():
 		print "Maze not altered as they almost win..."
 		return
 	print "Altering maze..."
-	while True:
+	
+	for i in xrange(100):
 		torem = 1 + int(random.random() * (len(m[0])-1)), 1 + int(random.random() * (len(m)-1)) # x, y
 		if m[torem[1]][torem[0]] != "X": continue
 		toadd = path[int(random.random() * len(path))]
@@ -318,7 +319,7 @@ while True:
 		for y in xrange(len(m)):
 			for x in xrange(len(m[0])):
 				pos = getDrawPos(x, y)
-				if m[y][x] == "X":
+				if filled(x, y):
 					pygame.draw.rect(screen, (0, 0, 0), pos)
 				else:
 					drawAsfalto(x, y)
