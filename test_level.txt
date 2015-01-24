@@ -1,0 +1,11 @@
+XXXXXXXXXXXXXXXXXX
+X 1   XXXX X X X X
+X   X XXXX X X X X
+X          X X X X
+X X              X
+X X X XXXX X X   X
+X X X XXXX   X 2 X
+X                X
+X   X XXXX   XXXXX
+X   X XXXX  XXXXXX
+XXXXXXXXXXXXXXXXXX
