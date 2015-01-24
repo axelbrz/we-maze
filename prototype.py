@@ -188,7 +188,7 @@ def loadImage(filename):
 def angleFromDir(dir):
 	if dir[0] == 0 and dir[1] == 1: return 90
 	if dir[0] == 1 and dir[1] == 0: return 180
-	if dir[0] == 0 and dir[1] == -1: return 270
+	if dir[0] == 0 and dir[1] == -1: return -90
 	if dir[0] == -1 and dir[1] == 0: return 0
 
 imagesPath = "images/"
@@ -281,6 +281,10 @@ while True:
 		maze = f.read()
 	m = []
 	loadMaze(maze)
+	dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
+	for i in xrange(4):
+		if empty(p1[0]+dx[i], p1[1]+dy[i]): dir1 = [dx[i], dy[i]]
+		if empty(p2[0]+dx[i], p2[1]+dy[i]): dir2 = [dx[i], dy[i]]
 	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
 	print "Screen size", size
@@ -293,6 +297,9 @@ while True:
 
 	pp1 = p1[:]
 	pp2 = p2[:]
+	
+	pangle1 = angleFromDir(dir1)
+	pangle2 = angleFromDir(dir2)
 
 	t_prev = time.time()
 	path1 = []
@@ -313,6 +320,8 @@ while True:
 		if t_curr - t_prev >= t_anim:
 			pp1 = p1[:]
 			pp2 = p2[:]
+			pangle1 = angleFromDir(dir1)
+			pangle2 = angleFromDir(dir2)
 			
 			path2 = bfs_p2_to_p1()
 			if playBot2:
@@ -321,17 +330,21 @@ while True:
 				p2 = list(path2[0])
 			else:
 				if pygame.K_w in keys:
-					dir2 = [0, -1]
-					if empty(p2[0], p2[1]-1): p2[1] -= 1
+					if empty(p2[0], p2[1]-1):
+						dir2 = [0, -1]
+						p2[1] -= 1
 				elif pygame.K_s in keys:
-					dir2 = [0, 1]
-					if empty(p2[0], p2[1]+1): p2[1] += 1
+					if empty(p2[0], p2[1]+1):
+						dir2 = [0, 1]
+						p2[1] += 1
 				elif pygame.K_d in keys:
-					dir2 = [1, 0]
-					if empty(p2[0]+1, p2[1]): p2[0] += 1
+					if empty(p2[0]+1, p2[1]):
+						dir2 = [1, 0]
+						p2[0] += 1
 				elif pygame.K_a in keys:
-					dir2 = [-1, 0]
-					if empty(p2[0]-1, p2[1]): p2[0] -= 1
+					if empty(p2[0]-1, p2[1]):
+						dir2 = [-1, 0]
+						p2[0] -= 1
 			
 			path1 = bfs_p1_to_p2()
 			if playBot1:
@@ -340,17 +353,26 @@ while True:
 				p1 = list(path1[0])
 			else:
 				if pygame.K_UP in keys:
-					dir1 = [0, -1]
-					if empty(p1[0], p1[1]-1): p1[1] -= 1
+					if empty(p1[0], p1[1]-1):
+						dir1 = [0, -1]
+						p1[1] -= 1
 				elif pygame.K_DOWN in keys:
-					dir1 = [0, 1]
-					if empty(p1[0], p1[1]+1): p1[1] += 1
+					if empty(p1[0], p1[1]+1):
+						dir1 = [0, 1]
+						p1[1] += 1
 				elif pygame.K_RIGHT in keys:
-					dir1 = [1, 0]
-					if empty(p1[0]+1, p1[1]): p1[0] += 1
+					if empty(p1[0]+1, p1[1]):
+						dir1 = [1, 0]
+						p1[0] += 1
 				elif pygame.K_LEFT in keys:
-					dir1 = [-1, 0]
-					if empty(p1[0]-1, p1[1]): p1[0] -= 1
+					if empty(p1[0]-1, p1[1]):
+						dir1 = [-1, 0]
+						p1[0] -= 1
+			
+			if abs(pangle1 + 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 += 360
+			elif abs(pangle1 - 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 -= 360
+			if abs(pangle2 + 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 += 360
+			elif abs(pangle2 - 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 -= 360
 			
 			steps += 1
 			if steps % steps_to_alter_maze == 0:
@@ -364,6 +386,15 @@ while True:
 			
 			d2[0] = ((t_curr - t_prev) / t_anim) * p2[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[0]
 			d2[1] = ((t_curr - t_prev) / t_anim) * p2[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[1]
+			
+			if abs(pangle1 - angleFromDir(dir1)) < 180:
+				p1_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir1) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle1
+			else:
+				p1_ang = angleFromDir(dir1)
+			if abs(pangle2 - angleFromDir(dir2)) < 180:
+				p2_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir2) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle2
+			else:
+				p2_ang = angleFromDir(dir2)
 			
 
 		screen.fill((255, 255, 255))
@@ -397,8 +428,8 @@ while True:
 		p1_pos = (int(d1[0] * wallsize), int(d1[1] * wallsize))
 		p2_pos = (int(d2[0] * wallsize), int(d2[1] * wallsize))
 		
-		rotated_player_1 = pygame.transform.rotate(player_1, angleFromDir(dir1))
-		rotated_player_2 = pygame.transform.rotate(player_2, angleFromDir(dir2))
+		rotated_player_1 = pygame.transform.rotate(player_1, p1_ang)
+		rotated_player_2 = pygame.transform.rotate(player_2, p2_ang)
 		
 		screen.blit(rotated_player_1, (p1_pos[0], p1_pos[1], asfalto_size[0], asfalto_size[1]))
 		screen.blit(rotated_player_2, (p2_pos[0], p2_pos[1], asfalto_size[0], asfalto_size[1]))
@@ -407,3 +438,19 @@ while True:
 		if dist(p1, p2) <= 1:
 			break # Winning condition
 	levelIndex = (levelIndex + 1) % len(levelFiles)
+
+while True:
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			sys.exit()
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_ESCAPE:
+				sys.exit()
+	#screen.fill((255, 255, 255))
+	screen.fill((0, 0, 0))
+	#Write credits here
+	myfont = pygame.font.SysFont("Verdana", 24)
+	label = myfont.render("We finally met dude! :D", 1, (255, 255, 255))
+	screen.blit(label, (100, 0))
+	pygame.display.flip()
+
