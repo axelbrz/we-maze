@@ -193,6 +193,7 @@ def angleFromDir(dir):
 
 imagesPath = "images/"
 audioPath = "audio/"
+fontsPath = "fonts/"
 levelsPath = "levels/"
 levelsName = "level_%d.txt"
 levelFiles = []
@@ -211,7 +212,7 @@ print "Levels:", levelFiles
 pygame.init()
 pygame.display.set_caption('We Maze!')
 screen = pygame.display.set_mode((640,480))
-font = pygame.font.SysFont("Agency FB", 500)
+font = pygame.font.Font(fontsPath + "countdown.ttf", 500)
 
 
 for i in range(3,0,-1):
@@ -221,9 +222,9 @@ for i in range(3,0,-1):
 	pygame.mixer.music.load(audioPath + 'countdown.ogg')
 	pygame.mixer.music.play(0)
 	if i>1:
-		screen.blit(label, (200, -60))
+		screen.blit(label, (150, -20))
 	else:
-		screen.blit(label, (250, -60))
+		screen.blit(label, (200, -20))
 	pygame.time.delay(100)
 	pygame.display.flip()
 	pygame.time.delay(1000)
