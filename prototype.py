@@ -216,15 +216,15 @@ font = pygame.font.Font(fontsPath + "countdown.ttf", 500)
 
 
 for i in range(3,0,-1):
-	red = (255,0,0)
-	screen.fill(red)
-	label = font.render("%d" % (i), 1, (255,255,0))
+	black = (0,0,0)
+	screen.fill(black)
+	text = font.render("%d" % (i), 1, (255,0,0))
 	pygame.mixer.music.load(audioPath + 'countdown.ogg')
 	pygame.mixer.music.play(0)
 	if i>1:
-		screen.blit(label, (150, -20))
+		screen.blit(text, (150, -20))
 	else:
-		screen.blit(label, (200, -20))
+		screen.blit(text, (200, -20))
 	pygame.time.delay(100)
 	pygame.display.flip()
 	pygame.time.delay(1000)
