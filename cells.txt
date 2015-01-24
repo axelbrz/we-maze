@@ -1,0 +1,5 @@
+X = Variables patrón
+1 = Red Player
+2 = Blue Player
+O = Fijos
+S = Subte

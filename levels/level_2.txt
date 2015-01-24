@@ -1,9 +1,7 @@
-XXXXXXXXXXXXXX
-X1         X X
-X X XX XXX X X
-X X X  X X   X
-X XXXXXX X XXX
-X            X
-XXXX XXXXXXXXX
-X           2X
-XXXXXXXXXXXXXX
+OOOOOOOOOOOO
+O2  OO     O
+O    OO    O
+O          O
+O    OO    O
+O   OO    1O
+OOOOOOOOOOOO
