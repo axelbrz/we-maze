@@ -205,7 +205,7 @@ print "Levels:", levelFiles
 pygame.init()
 pygame.display.set_caption('We Maze!')
 
-pygame.mixer.music.load(audioPath + 'back.mp3')
+pygame.mixer.music.load(audioPath + 'back.ogg')
 pygame.mixer.music.play(-1)
 	
 p1 = None
