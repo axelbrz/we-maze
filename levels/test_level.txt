@@ -3,9 +3,9 @@ X 1   XXXX X X X X
 X   X XXXX X X X X
 X          X X X X
 X X              X
-X X X XXXX X X   X
-X X X XXXX   X 2 X
-XXX              X
+X X X OOOO X X   X
+X X X OOOO   X 2 X
+XXX      S       X
 X   X XXXXX  XXXXX
 X  XX XXXX  XXXXXX
 XXXXXXXXXXXXXXXXXX
