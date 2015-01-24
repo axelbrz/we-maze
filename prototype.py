@@ -108,6 +108,56 @@ def alterMaze():
 				m[torem[1]][torem[0]] = "X"
 				m[toadd[1]][toadd[0]] = " "
 
+def getDrawPos(x, y):
+	global wallsize
+	return (x * wallsize + 0, y * wallsize + 0, wallsize - 0, wallsize - 0)
+
+def drawAsfalto(x, y):
+	pos = getDrawPos(x, y)
+	img = None
+	# Linea
+	if empty(x-1, y) and empty(x+1, y) and not empty(x, y+1) and not empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_linea, 90), asfalto_size
+	if not empty(x-1, y) and not empty(x+1, y) and empty(x, y+1) and empty(x, y-1):
+		img, img_size = asfalto_linea, asfalto_size
+	
+	# Esquina
+	if empty(x-1, y) and not empty(x+1, y) and not empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_esquina, 180), asfalto_size
+	if empty(x-1, y) and not empty(x+1, y) and empty(x, y+1) and not empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_esquina, 270), asfalto_size
+	if not empty(x-1, y) and empty(x+1, y) and not empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_esquina, 90), asfalto_size
+	if not empty(x-1, y) and empty(x+1, y) and empty(x, y+1) and not empty(x, y-1):
+		img, img_size = asfalto_esquina, asfalto_size
+	
+	# Cruz
+	if empty(x-1, y) and empty(x+1, y) and empty(x, y+1) and empty(x, y-1):
+		img, img_size = asfalto_cruz, asfalto_size
+	
+	# Fin
+	if empty(x-1, y) and not empty(x+1, y) and not empty(x, y+1) and not empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_fin, 270), asfalto_size
+	if not empty(x-1, y) and empty(x+1, y) and not empty(x, y+1) and not empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_fin, 90), asfalto_size
+	if not empty(x-1, y) and not empty(x+1, y) and empty(x, y+1) and not empty(x, y-1):
+		img, img_size = asfalto_fin, asfalto_size
+	if not empty(x-1, y) and not empty(x+1, y) and not empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_fin, 180), asfalto_size
+	
+	# T
+	if not empty(x-1, y) and empty(x+1, y) and empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_t, 90), asfalto_size
+	if empty(x-1, y) and not empty(x+1, y) and empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_t, 270), asfalto_size
+	if empty(x-1, y) and empty(x+1, y) and not empty(x, y+1) and empty(x, y-1):
+		img, img_size = pygame.transform.rotate(asfalto_t, 180), asfalto_size
+	if empty(x-1, y) and empty(x+1, y) and empty(x, y+1) and not empty(x, y-1):
+		img, img_size = asfalto_t, asfalto_size
+	
+	if img:
+		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
+				
 if len(sys.argv) != 2:
 	levelFile = "normal.txt"
 else:
@@ -128,8 +178,8 @@ m = []
 t_anim = 0.1
 steps_to_alter_maze = 5
 
-playBot1 = True
-playBot2 = True
+playBot1 = False
+playBot2 = False
 showBotPath1 = False
 showBotPath2 = False
 
@@ -137,11 +187,32 @@ steps = 0
 
 bulletMode = True
 
+imagesPath = "images/"
+
+
+
 while True:
 	loadMaze(maze)
 
-	wallsize = 30
-
+	wallsize = 32
+	
+	asfalto_linea = pygame.image.load(imagesPath + "asfalto_linea.png")
+	asfalto_linea = pygame.transform.scale(asfalto_linea, (wallsize, wallsize))
+	
+	asfalto_esquina = pygame.image.load(imagesPath + "asfalto_esquina.png")
+	asfalto_esquina = pygame.transform.scale(asfalto_esquina, (wallsize, wallsize))
+	
+	asfalto_cruz = pygame.image.load(imagesPath + "asfalto_cruz.png")
+	asfalto_cruz = pygame.transform.scale(asfalto_cruz, (wallsize, wallsize))
+	
+	asfalto_t = pygame.image.load(imagesPath + "asfalto_t.png")
+	asfalto_t = pygame.transform.scale(asfalto_t, (wallsize, wallsize))
+	
+	asfalto_fin = pygame.image.load(imagesPath + "asfalto_fin.png")
+	asfalto_fin = pygame.transform.scale(asfalto_fin, (wallsize, wallsize))
+	
+	asfalto_size = asfalto_linea.get_size()
+	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
 	print "Screen size", size
 
@@ -233,8 +304,11 @@ while True:
 		# Walls
 		for y in xrange(len(m)):
 			for x in xrange(len(m[0])):
+				pos = getDrawPos(x, y)
 				if m[y][x] == "X":
-					pygame.draw.rect(screen, (0, 0, 0), (x * wallsize + 0, y * wallsize + 0, wallsize - 1, wallsize - 1))
+					pygame.draw.rect(screen, (0, 0, 0), pos)
+				else:
+					drawAsfalto(x, y)
 		
 		# Players
 		#pygame.gfxdraw.aacircle(screen, int(d1[0] * wallsize + wallsize / 2 - 1), int(d1[1] * wallsize + wallsize / 2 - 1), int(wallsize / 2 * 0.8), (255,0,0))
