@@ -185,6 +185,12 @@ def loadImage(filename):
 	img = pygame.image.load(imagesPath + filename)
 	return pygame.transform.scale(img, (wallsize, wallsize))
 
+def angleFromDir(dir):
+	if dir[0] == 0 and dir[1] == 1: return 90
+	if dir[0] == 1 and dir[1] == 0: return 180
+	if dir[0] == 0 and dir[1] == -1: return 270
+	if dir[0] == -1 and dir[1] == 0: return 0
+
 imagesPath = "images/"
 audioPath = "audio/"
 levelsPath = "levels/"
@@ -225,7 +231,7 @@ for i in range(3,0,-1):
 	
 pygame.mixer.music.load(audioPath + 'back.ogg')
 pygame.mixer.music.play(-1)
-	
+
 p1 = None
 p2 = None
 dir1 = [1, 0]
@@ -248,6 +254,9 @@ levelIndex = 0
 
 while True:
 	wallsize = 32
+	
+	player_1 = loadImage("player_red.png")
+	player_2 = loadImage("player_blue.png")
 	
 	asfalto_linea = loadImage("asfalto_linea.png")
 	asfalto_esquina = loadImage("asfalto_esquina.png")
@@ -311,12 +320,16 @@ while True:
 				p2 = list(path2[0])
 			else:
 				if pygame.K_w in keys:
+					dir2 = [0, -1]
 					if empty(p2[0], p2[1]-1): p2[1] -= 1
 				elif pygame.K_s in keys:
+					dir2 = [0, 1]
 					if empty(p2[0], p2[1]+1): p2[1] += 1
 				elif pygame.K_d in keys:
+					dir2 = [1, 0]
 					if empty(p2[0]+1, p2[1]): p2[0] += 1
 				elif pygame.K_a in keys:
+					dir2 = [-1, 0]
 					if empty(p2[0]-1, p2[1]): p2[0] -= 1
 			
 			path1 = bfs_p1_to_p2()
@@ -326,12 +339,16 @@ while True:
 				p1 = list(path1[0])
 			else:
 				if pygame.K_UP in keys:
+					dir1 = [0, -1]
 					if empty(p1[0], p1[1]-1): p1[1] -= 1
 				elif pygame.K_DOWN in keys:
+					dir1 = [0, 1]
 					if empty(p1[0], p1[1]+1): p1[1] += 1
 				elif pygame.K_RIGHT in keys:
+					dir1 = [1, 0]
 					if empty(p1[0]+1, p1[1]): p1[0] += 1
 				elif pygame.K_LEFT in keys:
+					dir1 = [-1, 0]
 					if empty(p1[0]-1, p1[1]): p1[0] -= 1
 			
 			steps += 1
@@ -373,8 +390,17 @@ while True:
 		# Players
 		#pygame.gfxdraw.aacircle(screen, int(d1[0] * wallsize + wallsize / 2 - 1), int(d1[1] * wallsize + wallsize / 2 - 1), int(wallsize / 2 * 0.8), (255,0,0))
 		#pygame.gfxdraw.aacircle(screen, int(d2[0] * wallsize + wallsize / 2 - 1), int(d2[1] * wallsize + wallsize / 2 - 1), int(wallsize / 2 * 0.8), (0,0,255))
-		pygame.draw.circle(screen, (255,0,0), (int(d1[0] * wallsize + wallsize / 2 - 1), int(d1[1] * wallsize + wallsize / 2 - 1)), int(wallsize / 2 * 0.8))
-		pygame.draw.circle(screen, (0,0,255), (int(d2[0] * wallsize + wallsize / 2 - 1), int(d2[1] * wallsize + wallsize / 2 - 1)), int(wallsize / 2 * 0.8))
+		#pygame.draw.circle(screen, (255,0,0), (int(d1[0] * wallsize + wallsize / 2 - 1), int(d1[1] * wallsize + wallsize / 2 - 1)), int(wallsize / 2 * 0.8))
+		#pygame.draw.circle(screen, (0,0,255), (int(d2[0] * wallsize + wallsize / 2 - 1), int(d2[1] * wallsize + wallsize / 2 - 1)), int(wallsize / 2 * 0.8))
+		
+		p1_pos = (int(d1[0] * wallsize), int(d1[1] * wallsize))
+		p2_pos = (int(d2[0] * wallsize), int(d2[1] * wallsize))
+		
+		rotated_player_1 = pygame.transform.rotate(player_1, angleFromDir(dir1))
+		rotated_player_2 = pygame.transform.rotate(player_2, angleFromDir(dir2))
+		
+		screen.blit(rotated_player_1, (p1_pos[0], p1_pos[1], asfalto_size[0], asfalto_size[1]))
+		screen.blit(rotated_player_2, (p2_pos[0], p2_pos[1], asfalto_size[0], asfalto_size[1]))
 		
 		pygame.display.flip()
 		if dist(p1, p2) <= 1:
