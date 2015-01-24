@@ -109,6 +109,7 @@ def alterMaze():
 				m[toadd[1]][toadd[0]] = " "
 
 pygame.init()
+pygame.display.set_caption('we maze! (prototype)')
 
 maze = """
 XXXXXXXXXXXXXXXXX
@@ -155,6 +156,7 @@ while True:
 	wallsize = 30
 
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
+	print "Screen size", size
 
 	screen = pygame.display.set_mode(size)
 	keys = set()
@@ -191,13 +193,13 @@ while True:
 					break
 				p2 = list(path2[0])
 			else:
-				if pygame.K_UP in keys:
+				if pygame.K_w in keys:
 					if empty(p2[0], p2[1]-1): p2[1] -= 1
-				elif pygame.K_DOWN in keys:
+				elif pygame.K_s in keys:
 					if empty(p2[0], p2[1]+1): p2[1] += 1
-				elif pygame.K_RIGHT in keys:
+				elif pygame.K_d in keys:
 					if empty(p2[0]+1, p2[1]): p2[0] += 1
-				elif pygame.K_LEFT in keys:
+				elif pygame.K_a in keys:
 					if empty(p2[0]-1, p2[1]): p2[0] -= 1
 			
 			path1 = bfs_p1_to_p2()
@@ -206,13 +208,13 @@ while True:
 					break
 				p1 = list(path1[0])
 			else:
-				if pygame.K_w in keys:
+				if pygame.K_UP in keys:
 					if empty(p1[0], p1[1]-1): p1[1] -= 1
-				elif pygame.K_s in keys:
+				elif pygame.K_DOWN in keys:
 					if empty(p1[0], p1[1]+1): p1[1] += 1
-				elif pygame.K_d in keys:
+				elif pygame.K_RIGHT in keys:
 					if empty(p1[0]+1, p1[1]): p1[0] += 1
-				elif pygame.K_a in keys:
+				elif pygame.K_LEFT in keys:
 					if empty(p1[0]-1, p1[1]): p1[0] -= 1
 			
 			steps += 1
