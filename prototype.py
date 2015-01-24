@@ -161,6 +161,7 @@ def drawAsfalto(x, y):
 		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
 
 imagesPath = "images/"
+audioPath = "audio/"
 levelsPath = "levels/"
 levelsName = "level_%d.txt"
 levelFiles = []
@@ -179,7 +180,9 @@ print "Levels:", levelFiles
 pygame.init()
 pygame.display.set_caption('We Maze!')
 
-
+pygame.mixer.music.load(audioPath + 'back.mp3')
+pygame.mixer.music.play(-1)
+	
 p1 = None
 p2 = None
 dir1 = [1, 0]
