@@ -3,6 +3,7 @@ import pygame
 import pygame.gfxdraw
 import time
 import random
+import os
 
 def bfs(ini, end):
 	# de p2 a p1
@@ -160,23 +161,29 @@ def drawAsfalto(x, y):
 
 imagesPath = "images/"
 levelsPath = "levels/"
+levelsName = "level_%d.txt"
+levelFiles = []
 
 if len(sys.argv) != 2:
-	levelFile = levelsPath + "normal.txt"
+	lvlFiles = os.listdir(levelsPath)
+	levelCount = 1
+	levelFiles = []
+	while (levelsName % levelCount) in lvlFiles:
+		levelFiles.append(levelsName % levelCount)
+		levelCount += 1
 else:
-	levelFile = levelsPath + sys.argv[1]
+	levelFiles = [ sys.argv[1] ]
+print "Levels:", levelFiles
 
 pygame.init()
 pygame.display.set_caption('We Maze!')
 
-with open(levelFile) as f:
-	maze = f.read()
 
 p1 = None
 p2 = None
 dir1 = [1, 0]
 dir2 = [-1, 0]
-m = []
+
 
 t_anim = 0.1
 steps_to_alter_maze = 5
@@ -190,10 +197,16 @@ steps = 0
 
 bulletMode = True
 
+levelIndex = 0
 
 while True:
+	levelFile = levelsPath + levelFiles[levelIndex]
+	print levelFile
+	with open(levelFile) as f:
+		maze = f.read()
+	m = []
 	loadMaze(maze)
-
+	
 	wallsize = 32
 	
 	asfalto_linea = pygame.image.load(imagesPath + "asfalto_linea.png")
@@ -319,3 +332,4 @@ while True:
 		pygame.display.flip()
 		if dist(p1, p2) <= 1:
 			break # Winning condition
+	levelIndex = (levelIndex + 1) % len(levelFiles)
