@@ -1,0 +1,21 @@
+XXXXXXXXXXXXXXXXX
+X1          X   X
+X X X XXX X X X X
+X X X     X   X X
+X X X XX XXXXXX X
+X   X         X X
+XXX X X XXXXX X X
+X X X X X   X X X
+X X     X X   X X
+X XX XX X XXXXX X
+X       X X   X X
+XXXXXXXXX X X XXX
+X   X     X X X X
+X X X XXX X X X X
+X X X     X X   X
+X XXX XXX X XXXXX
+X              2X
+XXXXXXXXXXXXXXXXX
+
+1 0 # player 1 initial direction
+-1 0 # player 2 initial direction
