@@ -55,7 +55,7 @@ def bfs_p1_to_p2():
 
 
 def loadMaze(maze):
-	global p1, p2, m, images
+	global p1, p2, m, images, ob
 	
 	p1 = None
 	p2 = None
@@ -74,11 +74,15 @@ def loadMaze(maze):
 	for y in xrange(len(m)):
 		x1 = m[y].find("1")
 		x2 = m[y].find("2")
+		xo = m[y].find(".")
 		if x1 >= 0: p1 = [x1, y]
 		if x2 >= 0: p2 = [x2, y]
+		if xo >= 0: ob = [xo, y]
 		m[y] = m[y].replace("1", " ")
 		m[y] = m[y].replace("2", " ")
+		m[y] = m[y].replace(".", "O")
 		images.append([random.choice(imagePool) for x in xrange(len(m[0]))])
+
 		print "".join(m[y])
 	print "-" * len(m[0])
 	print "Dimensions:", (len(m[0]), len(m))
@@ -210,7 +214,10 @@ def drawBuilding(x, y):
 	pos = getDrawPos(x, y)
 	img = None
 	#img, img_size = pygame.transform.rotate(asfalto_linea, 90), asfalto_size
-	img, img_size = images[y][x], asfalto_size
+	if ob and list((x, y)) == list(ob):
+		img, img_size = obelisco, asfalto_size
+	else:
+		img, img_size = images[y][x], asfalto_size
 	if img:
 		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
 
@@ -328,6 +335,7 @@ print "Levels:", levelFiles
 
 p1 = None
 p2 = None
+ob = None
 dir1 = [1, 0]
 dir2 = [1, 0]
 images = []
@@ -408,6 +416,7 @@ steps = 0
 levelIndex = 0
 
 while True:
+	ob = None
 	wallsize = 32
 	
 	player_1 = loadImage("player_red.png")
@@ -421,6 +430,7 @@ while True:
 	
 	asfalto_size = asfalto_linea.get_size()
 	
+	obelisco = loadImage("obelisco.png")
 	edificio_1 = loadImage("edificio_1.png")
 	edificio_2 = loadImage("edificio_2.png")
 	edificio_3 = loadImage("edificio_3.png")

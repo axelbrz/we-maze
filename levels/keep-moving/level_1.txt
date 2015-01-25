@@ -1,6 +1,6 @@
 XXXXXXXXXXXXX
 X1         2X
-X O OOOOO O X
+X O OO.OO O X
 X           X
 XXXXXXXXXXXXX
 
