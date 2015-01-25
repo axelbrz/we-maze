@@ -2,9 +2,9 @@ OOOOOOcOOOOOO
 O 1   O     O
 O O O O O O O
 O        S  O
-OOO O . O OOO
+OOO O . OOOOO
 O  S      2 O
-O O O O O O O
+O OOO O O O O
 O     O     O
 OOOOOOOOOOOOO
 
