@@ -55,7 +55,7 @@ def bfs_p1_to_p2():
 
 
 def loadMaze(maze):
-	global p1, p2, m, images, ob
+	global p1, p2, m, images, ob, casa
 	
 	p1 = None
 	p2 = None
@@ -76,12 +76,15 @@ def loadMaze(maze):
 		x1 = m[y].find("1")
 		x2 = m[y].find("2")
 		xo = m[y].find(".")
+		xcasa = m[y].find("c")
 		if x1 >= 0: p1 = [x1, y]
 		if x2 >= 0: p2 = [x2, y]
 		if xo >= 0: ob = [xo, y]
+		if xcasa >= 0: casa = [xcasa, y]
 		m[y] = m[y].replace("1", " ")
 		m[y] = m[y].replace("2", " ")
 		m[y] = m[y].replace(".", "O")
+		m[y] = m[y].replace("c", "O")
 		images.append([random.choice(imagePool) for x in xrange(len(m[0]))])
 
 		print "".join(m[y])
@@ -91,7 +94,7 @@ def loadMaze(maze):
 	m = [[c for c in row] for row in m]
 
 def loadLevel(levelFile):
-	global maze, dx, dy, p1, p2, dir1, dir2
+	global maze, dx, dy, p1, p2, dir1, dir2, cars_count
 	print "Loading " + levelFile
 	with open(levelFile) as f:
 		data = f.read()
@@ -103,6 +106,10 @@ def loadLevel(levelFile):
 		#print config
 		dir1 = [int(config[0].split(" ")[0]), int(config[0].split(" ")[1])]
 		dir2 = [int(config[1].split(" ")[0]), int(config[1].split(" ")[1])]
+		if len(config) > 2:
+			cars_count = int(config[2].split(" ")[0])
+		else:
+			cars_count = 0
 		print "Player directions:", dir1, dir2
 	else:
 		dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
@@ -223,8 +230,11 @@ def drawBuilding(x, y):
 	#img, img_size = pygame.transform.rotate(asfalto_linea, 90), asfalto_size
 	if ob and list((x, y)) == list(ob):
 		img, img_size = obelisco, asfalto_size
+	elif casa and list((x, y)) == list(casa):
+		img, img_size = casa_rosada, asfalto_size
 	else:
 		img, img_size = images[y][x], asfalto_size
+	
 	if img:
 		screen.blit(img, (pos[0], pos[1], img_size[0], img_size[1]))
 
@@ -349,6 +359,7 @@ print "Levels:", levelFiles
 p1 = None
 p2 = None
 ob = None
+casa = None
 dir1 = [1, 0]
 dir2 = [1, 0]
 dirc = []
@@ -431,11 +442,11 @@ levelIndex = 0
 
 while True:
 	ob = None
+	casa = None
 	wallsize = 32
 	
 	cars_images = [loadImage("auto_rojo.png"), loadImage("auto_gris.png")]
-	cars_count = 0
-	cars_images = [random.choice(cars_images) for i in xrange(cars_count)]
+	
 	
 	player_1 = loadImage("player_red.png")
 	player_2 = loadImage("player_blue.png")
@@ -449,6 +460,7 @@ while True:
 	asfalto_size = asfalto_linea.get_size()
 	
 	obelisco = loadImage("obelisco.png")
+	casa_rosada = loadImage("rosada.png")
 	edificio_1 = loadImage("edificio_1.png")
 	edificio_2 = loadImage("edificio_2.png")
 	edificio_3 = loadImage("edificio_3.png")
@@ -459,10 +471,12 @@ while True:
 	plaza_3 = loadImage("plaza_3.png")
 	
 	subte_image = loadImage("subte.png")
-	
+	cars_count = 0
 	levelFile = levelsPath + levelFiles[levelIndex]
 	loadLevel(levelFile)
+	print "Cars count:", cars_count
 	
+	cars_images = [random.choice(cars_images) for i in xrange(cars_count)]
 	cars = [getRandomEmpty() for i in xrange(cars_count)]
 	
 	dirc = [random.choice([[0,1],[0,-1],[1,0],[-1,0]]) for i in xrange(cars_count)]
