@@ -222,9 +222,9 @@ for i in range(3,0,-1):
 	pygame.mixer.music.load(audioPath + 'countdown.ogg')
 	pygame.mixer.music.play(0)
 	if i>1:
-		screen.blit(text, (150, -20))
+		screen.blit(text, (160,0))
 	else:
-		screen.blit(text, (200, -20))
+		screen.blit(text, (230,0))
 	pygame.time.delay(100)
 	pygame.display.flip()
 	pygame.time.delay(1000)
