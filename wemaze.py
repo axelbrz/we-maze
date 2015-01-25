@@ -315,9 +315,9 @@ pygame.mixer.init()
 
 # TODO: Repeat when finished!
 #streetSound = pygame.mixer.Sound(audioPath + 'street_1.ogg')
-streetSound = pygame.mixer.Sound(audioPath + 'street_2.ogg')
-streetSound.set_volume(0.6)
-streetSound.play()
+streetSound = pygame.mixer.Sound(audioPath + 'street_3.ogg')
+streetSound.set_volume(0.5)
+streetSound.play(-1)
 
 # La intro sólo se muestra si se abre la secuencia entera de niveles
 introEnabled = (len(levelFiles) > 1)
@@ -363,7 +363,7 @@ if introEnabled:
 # TODO: Considerar si tenemos este problema, con esta solución:
 # http://stackoverflow.com/a/13361935/1112654
 pygame.mixer.music.load(audioPath + 'back.ogg')
-pygame.mixer.music.set_volume(0.8)
+pygame.mixer.music.set_volume(1)
 pygame.mixer.music.play(-1)
 
 
@@ -593,10 +593,23 @@ while True:
 			if event.key == pygame.K_ESCAPE:
 				sys.exit()
 	#screen.fill((255, 255, 255))
+	screen = changeDisplayMode((640,480))
 	screen.fill((0, 0, 0))
 	#Write credits here
 	myfont = pygame.font.SysFont("Verdana", 24)
 	label = myfont.render("We finally met dude! :D", 1, (255, 255, 255))
-	screen.blit(label, (100, 0))
+	screen.blit(label, (170, 50))
+	label = myfont.render("Credits:", 1, (255, 255, 255))
+	screen.blit(label, (100, 200))
+	label = myfont.render("Main Programmer: Axel Brzostowski", 1, (255, 255, 255))
+	screen.blit(label, (100, 250))
+	label = myfont.render("Level Designer: Blas Ingiulla", 1, (255, 255, 255))
+	screen.blit(label, (100, 280))
+	label = myfont.render("Music: Leandro Bordino", 1, (255, 255, 255))
+	screen.blit(label, (100, 310))
+	label = myfont.render("Junior Programmer: Manuel Parma", 1, (255, 255, 255))
+	screen.blit(label, (100, 340))
+	label = myfont.render("Artists: Everyone", 1, (255, 255, 255))
+	screen.blit(label, (100, 370))
 	pygame.display.flip()
 
