@@ -316,7 +316,7 @@ pygame.mixer.init()
 # TODO: Repeat when finished!
 #streetSound = pygame.mixer.Sound(audioPath + 'street_1.ogg')
 streetSound = pygame.mixer.Sound(audioPath + 'street_3.ogg')
-streetSound.set_volume(0.5)
+streetSound.set_volume(0.3)
 streetSound.play(-1)
 
 # La intro sólo se muestra si se abre la secuencia entera de niveles
