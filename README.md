@@ -11,10 +11,7 @@ python wemaze.py
 
 ## Credits
 
-**Music**: Leandro Bordino and Salazar Riquelme Federico Agustin
-
-**Main Programmer**: Axel Brzostowski
-
-**Junior Programmer**: Manuel Parma
-
-**Level Designer**: Blas Ingiulla
+- **Music**: Leandro Bordino and Salazar Riquelme Federico Agustin
+- **Main Programmer**: Axel Brzostowski
+- **Junior Programmer**: Manuel Parma
+- **Level Designer**: Blas Ingiulla
