@@ -445,7 +445,13 @@ while True:
 	casa = None
 	wallsize = 32
 	
-	cars_images = [loadImage("auto_rojo.png"), loadImage("auto_gris.png")]
+	cars_images = [
+		loadImage("auto_rojo.png"),
+		loadImage("auto_gris.png"),
+		loadImage("auto_amarillo.png"),
+		loadImage("auto_mini.png"),
+		loadImage("auto_azul.png"),
+	]
 	
 	
 	player_1 = loadImage("player_red.png")
