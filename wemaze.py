@@ -1,3 +1,5 @@
+# coding: latin-1
+
 import sys
 import pygame
 import pygame.gfxdraw
@@ -235,24 +237,45 @@ print "Levels:", levelFiles
 pygame.init()
 
 pygame.display.set_caption('We Maze!')
+
+
+# TODO: Enseñarle a Manu arrays
+
+# Countdown
+
 screen = changeDisplayMode((640,480))
-font = pygame.font.Font(fontsPath + "countdown.ttf", 500)
+font = pygame.font.Font(fontsPath + "countdown.ttf", 150)
 
 
-for i in range(3,0,-1):
-	black = (0,0,0)
-	screen.fill(black)
-	text = font.render("%d" % (i), 1, (255,0,0))
-	pygame.mixer.music.load(audioPath + 'countdown.ogg')
-	pygame.mixer.music.play(0)
-	if i>1:
-		screen.blit(text, (150, -20))
-	else:
-		screen.blit(text, (200, -20))
-	pygame.time.delay(100)
-	pygame.display.flip()
-	pygame.time.delay(1000)
+black = (0,0,0)
+text1 = font.render("Ready", 1, (255,0,0))
+text2 = font.render("Steady", 1, (255,0,0))
+text3 = font.render("Relax", 1, (255,0,0))
+pygame.mixer.music.load(audioPath + 'countdown.ogg')
 
+screen.fill(black)
+pygame.mixer.music.play(0)
+pygame.time.delay(100)
+screen.blit(text1, (130,150))
+pygame.display.flip()
+pygame.time.delay(1000)
+
+screen.fill(black)
+pygame.mixer.music.play(0)
+pygame.time.delay(100)
+screen.blit(text2, (80,150))
+pygame.display.flip()
+pygame.time.delay(1000)
+
+screen.fill(black)
+pygame.mixer.music.play(0)
+pygame.time.delay(100)
+screen.blit(text3, (130,150))
+pygame.display.flip()
+pygame.time.delay(1000)
+
+
+# Loading background music
 	
 pygame.mixer.music.load(audioPath + 'back.ogg')
 pygame.mixer.music.play(-1)
