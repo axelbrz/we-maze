@@ -150,6 +150,12 @@ def alterMaze():
 		toadd = path[int(random.random() * len(path))]
 		if dist(toadd, p1) == 0 or dist(toadd, p2) == 0: continue # VARIABLES DE CONFIG!!
 		if list(p1) == list(toadd) or list(p2) == list(toadd): continue
+		inCar = False
+		for c in cars:
+			if list(c) == list(toadd):
+				inCar = True
+				break
+		if inCar: continue
 		
 		if isMovable(torem) and isMovable(toadd):
 			m[torem[1]][torem[0]] = " "
@@ -307,6 +313,12 @@ def getRandomDir(p, d, enSubte):
 	opts = [getLeft(p, d, enSubte), getRight(p, d, enSubte)]
 	return random.choice(opts)
 
+def getRandomEmpty():
+	while True:
+		y = int(random.random() * len(m))
+		x = int(random.random() * len(m[0]))
+		if empty(x, y): return [x, y]
+
 GAME_TITLE = "We Maze!"
 
 SCREEN_RESOLUTION = getScreenResolution()
@@ -339,6 +351,7 @@ p2 = None
 ob = None
 dir1 = [1, 0]
 dir2 = [1, 0]
+dirc = []
 images = []
 
 t_anim = 0.2
@@ -420,6 +433,10 @@ while True:
 	ob = None
 	wallsize = 32
 	
+	cars_images = [loadImage("auto_rojo.png"), loadImage("auto_gris.png")]
+	cars_count = 0
+	cars_images = [random.choice(cars_images) for i in xrange(cars_count)]
+	
 	player_1 = loadImage("player_red.png")
 	player_2 = loadImage("player_blue.png")
 	
@@ -446,6 +463,10 @@ while True:
 	levelFile = levelsPath + levelFiles[levelIndex]
 	loadLevel(levelFile)
 	
+	cars = [getRandomEmpty() for i in xrange(cars_count)]
+	
+	dirc = [random.choice([[0,1],[0,-1],[1,0],[-1,0]]) for i in xrange(cars_count)]
+	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
 	print "Screen size:", size
 	
@@ -455,13 +476,16 @@ while True:
 
 	d1 = p1[:]
 	d2 = p2[:]
-
+	dc = [c[:] for c in cars]
+	
 	pp1 = p1[:]
 	pp2 = p2[:]
+	ppc = [c[:] for c in cars]
 	
 	pangle1 = angleFromDir(dir1)
 	pangle2 = angleFromDir(dir2)
-
+	panglec = [angleFromDir(d) for d in dirc]
+	
 	t_prev = time.time()
 	path1 = []
 	path2 = []
@@ -469,6 +493,7 @@ while True:
 	collision = False
 	enSubte1 = False
 	enSubte2 = False
+	
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -486,8 +511,10 @@ while True:
 			
 			pp1 = p1[:]
 			pp2 = p2[:]
+			ppc = [c[:] for c in cars]
 			pangle1 = angleFromDir(dir1)
 			pangle2 = angleFromDir(dir2)
+			panglec = [angleFromDir(d) for d in dirc]
 			
 			if playBot1: path1 = bfs_p1_to_p2()
 			if playBot2: path2 = bfs_p2_to_p1()
@@ -573,12 +600,23 @@ while True:
 							dir2 = [-1, 0]
 							p2[0] -= 1
 			
+			for i in xrange(len(cars)):
+				c = cars[i]
+				next_c = getRandomDir(c, dirc[i], False)
+				if next_c != c: dirc[i] = [next_c[0] - c[0], next_c[1] - c[1]]
+				cars[i] = next_c
+			
 			if not enSubte1:
 				if abs(pangle1 + 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 += 360
 				elif abs(pangle1 - 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 -= 360
 			if not enSubte2:
 				if abs(pangle2 + 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 += 360
 				elif abs(pangle2 - 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 -= 360
+			
+			for i in xrange(len(cars)):
+				pangle = panglec[i]
+				if abs(pangle + 360 - angleFromDir(dirc[i])) < abs(pangle - angleFromDir(dirc[i])): panglec[i] += 360
+				elif abs(pangle2 - 360 - angleFromDir(dirc[i])) < abs(pangle - angleFromDir(dirc[i])): panglec[i] -= 360
 			
 			steps += 1
 			if steps % steps_to_alter_maze == 0:
@@ -608,7 +646,17 @@ while True:
 					p2_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir2) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle2
 				else:
 					p2_ang = angleFromDir(dir2)
-			
+			c_ang = [0.0 for c in cars]
+			for i in xrange(len(cars)):
+				c = cars[i]
+				
+				dc[i][0] = ((t_curr - t_prev) / t_anim) * c[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * ppc[i][0]
+				dc[i][1] = ((t_curr - t_prev) / t_anim) * c[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * ppc[i][1]
+				if won and collision: dc[i] = [(dc[i][0]+ppc[i][0])/2., (dc[i][1]+ppc[i][1])/2.]
+				if abs(panglec[i] - angleFromDir(dirc[i])) < 180:
+					c_ang[i] = ((t_curr - t_prev) / t_anim) * angleFromDir(dirc[i]) + ((t_anim - (t_curr - t_prev)) / t_anim) * panglec[i]
+				else:
+					c_ang[i] = angleFromDir(dirc[i])
 
 		screen.fill((255, 255, 255))
 		
@@ -655,6 +703,14 @@ while True:
 					#subte_pos = (int(x * wallsize), int(y * wallsize))
 					screen.blit(subte_image, (pos[0], pos[1], asfalto_size[0], asfalto_size[1]))
 					#pygame.draw.rect(screen, (255, 0, 0), pos)
+		
+		# Cars
+		for ci in xrange(len(cars)):
+			c = cars[ci]
+			c_pos = (int(dc[ci][0] * wallsize), int(dc[ci][1] * wallsize))
+			rotated_c = pygame.transform.rotate(cars_images[ci], c_ang[ci])
+			screen.blit(rotated_c, (c_pos[0], c_pos[1], asfalto_size[0], asfalto_size[1]))
+		
 		pygame.display.flip()
 		
 	levelIndex += 1
