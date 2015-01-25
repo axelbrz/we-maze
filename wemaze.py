@@ -68,6 +68,7 @@ def loadMaze(maze):
 		edificio_5,
 		edificio_6,
 		plaza,
+		plaza_3,
 	]
 	m = [line for line in maze.split("\n") if line.strip() != ""]
 	print "-" * len(m[0])
@@ -438,6 +439,7 @@ while True:
 	edificio_5 = loadImage("edificio_5.png")
 	edificio_6 = loadImage("edificio_6.png")
 	plaza = loadImage("plaza.png")
+	plaza_3 = loadImage("plaza_3.png")
 	
 	subte_image = loadImage("subte.png")
 	
