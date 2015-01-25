@@ -239,7 +239,7 @@ dir1 = [1, 0]
 dir2 = [-1, 0]
 images = []
 
-t_anim = 0.1
+t_anim = 0.15
 steps_to_alter_maze = 5
 
 playBot1 = False
@@ -437,7 +437,9 @@ while True:
 		pygame.display.flip()
 		if dist(p1, p2) <= 1:
 			break # Winning condition
-	levelIndex = (levelIndex + 1) % len(levelFiles)
+	levelIndex += 1
+	if levelIndex == len(levelFiles):
+		break
 
 while True:
 	for event in pygame.event.get():
