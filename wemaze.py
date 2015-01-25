@@ -20,8 +20,17 @@ def bfs(ini, end):
 	i = 0
 	while len(q) - i > 0:
 		c = q[i]
-		for j in xrange(4):
-			n = (c[0] + dx[j], c[1] + dy[j])
+		ns = []
+		if subte(c[0], c[1]):
+			for y in xrange(len(m)):
+				for x in xrange(len(m[0])):
+					if (x, y) == (c[0], c[1]): continue
+					ns.append((x, y))
+		else:
+			for j in xrange(4):
+				ns.append((c[0] + dx[j], c[1] + dy[j]))
+		
+		for n in ns:
 			if not n in used and empty(n[0], n[1]):
 				used.add(n)
 				pre[n] = c
@@ -100,14 +109,20 @@ def loadLevel(levelFile):
 def empty(x, y):
 	global m
 	if x < 0 or y < 0 or x >= len(m[0]) or y >= len(m): return False
-	return m[y][x] == " "
+	return m[y][x] == " " or m[y][x] == "S"
 
 def filled(x, y):
 	global m
 	if x < 0 or y < 0 or x >= len(m[0]) or y >= len(m): return False
-	return m[y][x] == "X" or m[y][x] == "O"
+	return m[y][x] == "X" or m[y][x] == "O" or m[y][x] == "S"
+
+def subte(x, y):
+	global m
+	if x < 0 or y < 0 or x >= len(m[0]) or y >= len(m): return False
+	return m[y][x] == "S"
 
 def isMovable(c):
+	if subte(c[0], c[1]): return False
 	if empty(c[0], c[1]-1) and empty(c[0], c[1]+1):
 		if filled(c[0]-1, c[1]) and filled(c[0]+1, c[1]):
 			return True
@@ -209,6 +224,7 @@ def angleFromDir(dir):
 	if dir[0] == 1 and dir[1] == 0: return 180
 	if dir[0] == 0 and dir[1] == -1: return -90
 	if dir[0] == -1 and dir[1] == 0: return 0
+	return 0
 
 def getScreenResolution():
 	try:
@@ -235,8 +251,15 @@ def changeDisplayMode(size):
 	os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % ((SCREEN_RESOLUTION[0] - size[0]) / 2, (SCREEN_RESOLUTION[1] - size[1]) / 2)
 	return pygame.display.set_mode(size)
 
-
-def getRight(p, d):
+def getRight(p, d, enSubte):
+	if enSubte and subte(p[0], p[1]):
+		for y in xrange(len(m)):
+			for x in xrange(len(m[0])):
+				if (x, y) == (p[0], p[1]): continue
+				if subte(x, y):
+					#print "Right subway", x, y
+					return [x, y]
+					
 	dx, dy = [0, 0, -1, 1], [1, -1, 0, 0]
 	ps = []
 	for i in xrange(4):
@@ -250,7 +273,15 @@ def getRight(p, d):
 	if empty(p[0]+d[0], p[1]+d[1]): return [p[0]+d[0], p[1]+d[1]]
 	return [p[0]-d[0], p[1]-d[1]]
 
-def getLeft(p, d):
+def getLeft(p, d, enSubte):
+	if enSubte and subte(p[0], p[1]):
+		for y in xrange(len(m)):
+			for x in xrange(len(m[0])):
+				if (x, y) == (p[0], p[1]): continue
+				if subte(x, y):
+					#print "Left subway", x, y
+					return [x, y]
+	
 	dx, dy = [0, 0, -1, 1], [1, -1, 0, 0]
 	ps = []
 	for i in xrange(4):
@@ -263,6 +294,10 @@ def getLeft(p, d):
 	if empty(p[0]+n[0], p[1]+n[1]): return [p[0]+n[0], p[1]+n[1]]
 	if empty(p[0]+d[0], p[1]+d[1]): return [p[0]+d[0], p[1]+d[1]]
 	return [p[0]-d[0], p[1]-d[1]]
+
+def getRandomDir(p, d, enSubte):
+	opts = [getLeft(p, d, enSubte), getRight(p, d, enSubte)]
+	return random.choice(opts)
 
 GAME_TITLE = "We Maze!"
 
@@ -394,6 +429,8 @@ while True:
 	edificio_6 = loadImage("edificio_6.png")
 	plaza = loadImage("plaza.png")
 	
+	subte_image = loadImage("subte.png")
+	
 	levelFile = levelsPath + levelFiles[levelIndex]
 	loadLevel(levelFile)
 	
@@ -418,6 +455,8 @@ while True:
 	path2 = []
 	won = False
 	collision = False
+	enSubte1 = False
+	enSubte2 = False
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -432,6 +471,7 @@ while True:
 		t_curr = time.time()
 		if t_curr - t_prev >= t_anim:
 			if won: break
+			
 			pp1 = p1[:]
 			pp2 = p2[:]
 			pangle1 = angleFromDir(dir1)
@@ -444,6 +484,15 @@ while True:
 			# Controllers
 			#==========================
 			
+			
+			# Subte P1
+			if not enSubte1 and subte(pp1[0], pp1[1]):
+				enSubte1 = True
+			else:
+				enSubte1 = False
+			#print "Subway1", enSubte1
+			
+			
 			# Bot 1
 			if playBot1:
 				next_p1 = list(path1[0])
@@ -452,8 +501,8 @@ while True:
 			else:
 				# Player 1 - Always moving
 				if keepMoving:
-					next_p1 = getLeft(p1, dir1) if pygame.K_LEFT in keys else getRight(p1, dir1)
-					if next_p1 != p1: dir1 = [next_p1[0] - p1[0], next_p1[1] - p1[1]]
+					next_p1 = getLeft(p1, dir1, enSubte1) if pygame.K_LEFT in keys else getRight(p1, dir1, enSubte1)
+					if not enSubte1 and next_p1 != p1: dir1 = [next_p1[0] - p1[0], next_p1[1] - p1[1]]
 					p1 = next_p1
 				
 				# Player 1 - Keys
@@ -475,19 +524,26 @@ while True:
 							dir1 = [-1, 0]
 							p1[0] -= 1
 			
+			# Subte P2
+			if not enSubte2 and subte(pp2[0], pp2[1]):
+				enSubte2 = True
+			else:
+				enSubte2 = False
+			#print "Subway2", enSubte2
+			
 			# Bot 2
 			if playBot2:
 				next_p2 = list(path2[0])
-				if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
+				if not enSubte2 and next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
 				p2 = next_p2
 			else:
-				# Player 1 - Always moving
+				# Player 2 - Always moving
 				if keepMoving:
-					next_p2 = getRight(p2, dir2) if pygame.K_RIGHT in keys else getLeft(p2, dir2)
-					if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
+					next_p2 = getRight(p2, dir2, enSubte2) if pygame.K_RIGHT in keys else getLeft(p2, dir2, enSubte2)
+					if not enSubte2 and next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
 					p2 = next_p2
 				else:
-					# Player 1 - Keys
+					# Player 2 - Keys
 					if pygame.K_w in keys:
 						if empty(p2[0], p2[1]-1):
 							dir2 = [0, -1]
@@ -505,10 +561,12 @@ while True:
 							dir2 = [-1, 0]
 							p2[0] -= 1
 			
-			if abs(pangle1 + 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 += 360
-			elif abs(pangle1 - 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 -= 360
-			if abs(pangle2 + 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 += 360
-			elif abs(pangle2 - 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 -= 360
+			if not enSubte1:
+				if abs(pangle1 + 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 += 360
+				elif abs(pangle1 - 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 -= 360
+			if not enSubte2:
+				if abs(pangle2 + 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 += 360
+				elif abs(pangle2 - 360 - angleFromDir(dir2)) < abs(pangle2 - angleFromDir(dir2)): pangle2 -= 360
 			
 			steps += 1
 			if steps % steps_to_alter_maze == 0:
@@ -521,24 +579,23 @@ while True:
 			t_prev = t_curr
 			
 		else:
-			d1[0] = ((t_curr - t_prev) / t_anim) * p1[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp1[0]
-			d1[1] = ((t_curr - t_prev) / t_anim) * p1[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp1[1]
+			if not enSubte1:
+				d1[0] = ((t_curr - t_prev) / t_anim) * p1[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp1[0]
+				d1[1] = ((t_curr - t_prev) / t_anim) * p1[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp1[1]
+				if won and collision: d1 = [(d1[0]+pp1[0])/2., (d1[1]+pp1[1])/2.]
+				if abs(pangle1 - angleFromDir(dir1)) < 180:
+					p1_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir1) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle1
+				else:
+					p1_ang = angleFromDir(dir1)
 			
-			d2[0] = ((t_curr - t_prev) / t_anim) * p2[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[0]
-			d2[1] = ((t_curr - t_prev) / t_anim) * p2[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[1]
-			
-			if won and collision:
-				d1 = [(d1[0]+pp1[0])/2., (d1[1]+pp1[1])/2.]
-				d2 = [(d2[0]+pp2[0])/2., (d2[1]+pp2[1])/2.]
-			
-			if abs(pangle1 - angleFromDir(dir1)) < 180:
-				p1_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir1) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle1
-			else:
-				p1_ang = angleFromDir(dir1)
-			if abs(pangle2 - angleFromDir(dir2)) < 180:
-				p2_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir2) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle2
-			else:
-				p2_ang = angleFromDir(dir2)
+			if not enSubte2:
+				d2[0] = ((t_curr - t_prev) / t_anim) * p2[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[0]
+				d2[1] = ((t_curr - t_prev) / t_anim) * p2[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[1]
+				if won and collision: d2 = [(d2[0]+pp2[0])/2., (d2[1]+pp2[1])/2.]
+				if abs(pangle2 - angleFromDir(dir2)) < 180:
+					p2_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir2) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle2
+				else:
+					p2_ang = angleFromDir(dir2)
 			
 
 		screen.fill((255, 255, 255))
@@ -557,7 +614,7 @@ while True:
 		for y in xrange(len(m)):
 			for x in xrange(len(m[0])):
 				pos = getDrawPos(x, y)
-				if filled(x, y):
+				if m[y][x] == 'X' or m[y][x] == 'O':
 					#pygame.draw.rect(screen, (0, 0, 0), pos)
 					drawBuilding(x, y)
 				else:
@@ -578,6 +635,14 @@ while True:
 		screen.blit(rotated_player_1, (p1_pos[0], p1_pos[1], asfalto_size[0], asfalto_size[1]))
 		screen.blit(rotated_player_2, (p2_pos[0], p2_pos[1], asfalto_size[0], asfalto_size[1]))
 		
+		# Subway
+		for y in xrange(len(m)):
+			for x in xrange(len(m[0])):
+				pos = getDrawPos(x, y)
+				if subte(x, y):
+					#subte_pos = (int(x * wallsize), int(y * wallsize))
+					screen.blit(subte_image, (pos[0], pos[1], asfalto_size[0], asfalto_size[1]))
+					#pygame.draw.rect(screen, (255, 0, 0), pos)
 		pygame.display.flip()
 		
 	levelIndex += 1
