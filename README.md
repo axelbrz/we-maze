@@ -1,5 +1,7 @@
 # We Maze!
 
+Two friends on bikes are looking for each other in the complex city of Buenos Aires. Help them to meet!
+
 ## Instructions
 
 1. Install python 2.7.9 from: https://www.python.org/downloads/
