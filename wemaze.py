@@ -596,6 +596,9 @@ while True:
 	screen = changeDisplayMode((640,480))
 	screen.fill((0, 0, 0))
 	#Write credits here
+	pygame.mixer.music.stop
+	pygame.mixer.music.load(audioPath + 'credits.ogg')
+	pygame.mixer.music.play(-1)
 	myfont = pygame.font.SysFont("Verdana", 24)
 	label = myfont.render("We finally met dude! :D", 1, (255, 255, 255))
 	screen.blit(label, (170, 50))
@@ -606,10 +609,12 @@ while True:
 	label = myfont.render("Level Designer: Blas Ingiulla", 1, (255, 255, 255))
 	screen.blit(label, (100, 280))
 	label = myfont.render("Music: Leandro Bordino", 1, (255, 255, 255))
-	screen.blit(label, (100, 310))
-	label = myfont.render("Junior Programmer: Manuel Parma", 1, (255, 255, 255))
 	screen.blit(label, (100, 340))
-	label = myfont.render("Artists: Everyone", 1, (255, 255, 255))
+	label = myfont.render("Music: Salazar Riquelme Federico Agustin", 1, (255, 255, 255))
 	screen.blit(label, (100, 370))
+	label = myfont.render("Junior Programmer: Manuel Parma", 1, (255, 255, 255))
+	screen.blit(label, (100, 310))
+	label = myfont.render("Artists: Everyone", 1, (255, 255, 255))
+	screen.blit(label, (100, 400))
 	pygame.display.flip()
 
