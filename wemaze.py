@@ -91,7 +91,7 @@ def loadMaze(maze):
 	m = [[c for c in row] for row in m]
 
 def loadLevel(levelFile):
-	global maze, dx, dy, p1, p2, dir1, dir2
+	global maze, dx, dy, p1, p2, dir1, dir2, cars_count
 	print "Loading " + levelFile
 	with open(levelFile) as f:
 		data = f.read()
@@ -103,6 +103,10 @@ def loadLevel(levelFile):
 		#print config
 		dir1 = [int(config[0].split(" ")[0]), int(config[0].split(" ")[1])]
 		dir2 = [int(config[1].split(" ")[0]), int(config[1].split(" ")[1])]
+		if len(config) > 2:
+			cars_count = int(config[2].split(" ")[0])
+		else:
+			cars_count = 0
 		print "Player directions:", dir1, dir2
 	else:
 		dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
@@ -434,8 +438,7 @@ while True:
 	wallsize = 32
 	
 	cars_images = [loadImage("auto_rojo.png"), loadImage("auto_gris.png")]
-	cars_count = 0
-	cars_images = [random.choice(cars_images) for i in xrange(cars_count)]
+	
 	
 	player_1 = loadImage("player_red.png")
 	player_2 = loadImage("player_blue.png")
@@ -459,10 +462,12 @@ while True:
 	plaza_3 = loadImage("plaza_3.png")
 	
 	subte_image = loadImage("subte.png")
-	
+	cars_count = 0
 	levelFile = levelsPath + levelFiles[levelIndex]
 	loadLevel(levelFile)
+	print "Cars count:", cars_count
 	
+	cars_images = [random.choice(cars_images) for i in xrange(cars_count)]
 	cars = [getRandomEmpty() for i in xrange(cars_count)]
 	
 	dirc = [random.choice([[0,1],[0,-1],[1,0],[-1,0]]) for i in xrange(cars_count)]
