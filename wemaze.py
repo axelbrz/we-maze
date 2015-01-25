@@ -60,7 +60,7 @@ def loadMaze(maze):
 		edificio_6,
 		plaza,
 	]
-	m = maze.split("\n")[0:-1]
+	m = [line for line in maze.split("\n") if line.strip() != ""]
 	print "-" * len(m[0])
 	for y in xrange(len(m)):
 		x1 = m[y].find("1")
@@ -75,6 +75,27 @@ def loadMaze(maze):
 	print "Dimensions:", (len(m[0]), len(m))
 	print "Players:", p1, p2
 	m = [[c for c in row] for row in m]
+
+def loadLevel(levelFile):
+	global maze, dx, dy, p1, p2, dir1, dir2
+	print "Loading " + levelFile
+	with open(levelFile) as f:
+		data = f.read()
+	data = data.split("\n\n")
+	m = []
+	loadMaze(data[0])
+	if keepMoving:
+		config = [line[:line.find("#")] for line in data[1].split("\n") if line[:line.find("#")].strip() != ""]
+		#print config
+		dir1 = [int(config[0].split(" ")[0]), int(config[0].split(" ")[1])]
+		dir2 = [int(config[1].split(" ")[0]), int(config[1].split(" ")[1])]
+		print "Player directions:", dir1, dir2
+	else:
+		dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
+		for i in xrange(4):
+			if empty(p1[0]+dx[i], p1[1]+dy[i]): dir1 = [dx[i], dy[i]]
+			if empty(p2[0]+dx[i], p2[1]+dy[i]): dir2 = [dx[i], dy[i]]
+	
 
 def empty(x, y):
 	global m
@@ -214,12 +235,47 @@ def changeDisplayMode(size):
 	os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % ((SCREEN_RESOLUTION[0] - size[0]) / 2, (SCREEN_RESOLUTION[1] - size[1]) / 2)
 	return pygame.display.set_mode(size)
 
+
+def getRight(p, d):
+	dx, dy = [0, 0, -1, 1], [1, -1, 0, 0]
+	ps = []
+	for i in xrange(4):
+		if d != [-dx[i], -dy[i]] and empty(p[0]+dx[i], p[1]+dy[i]): ps.append([p[0]+dx[i], p[1]+dy[i]])
+	if len(ps) == 1: return ps[0]
+	if d == [0, 1]: n = [-1, 0]
+	if d == [0, -1]: n = [1, 0]
+	if d == [1, 0]: n = [0, 1]
+	if d == [-1, 0]: n = [0, -1]
+	if empty(p[0]+n[0], p[1]+n[1]): return [p[0]+n[0], p[1]+n[1]]
+	if empty(p[0]+d[0], p[1]+d[1]): return [p[0]+d[0], p[1]+d[1]]
+	return [p[0]-d[0], p[1]-d[1]]
+
+def getLeft(p, d):
+	dx, dy = [0, 0, -1, 1], [1, -1, 0, 0]
+	ps = []
+	for i in xrange(4):
+		if d != [-dx[i], -dy[i]] and empty(p[0]+dx[i], p[1]+dy[i]): ps.append([p[0]+dx[i], p[1]+dy[i]])
+	if len(ps) == 1: return ps[0]
+	if d == [0, 1]: n = [1, 0]
+	if d == [0, -1]: n = [-1, 0]
+	if d == [1, 0]: n = [0, -1]
+	if d == [-1, 0]: n = [0, 1]
+	if empty(p[0]+n[0], p[1]+n[1]): return [p[0]+n[0], p[1]+n[1]]
+	if empty(p[0]+d[0], p[1]+d[1]): return [p[0]+d[0], p[1]+d[1]]
+	return [p[0]-d[0], p[1]-d[1]]
+
+GAME_TITLE = "We Maze!"
+
 SCREEN_RESOLUTION = getScreenResolution()
+
+keepMoving = True
+# TODO: Hacer bots para keepMoving!
 
 imagesPath = "images/"
 audioPath = "audio/"
 fontsPath = "fonts/"
 levelsPath = "levels/"
+if keepMoving: levelsPath += "keep-moving/"
 levelsName = "level_%d.txt"
 levelFiles = []
 
@@ -234,59 +290,14 @@ else:
 	levelFiles = [ sys.argv[1] ]
 print "Levels:", levelFiles
 
-pygame.init()
-
-pygame.display.set_caption('We Maze!')
-
-
-# TODO: Enseñarle a Manu arrays
-
-# Countdown
-
-screen = changeDisplayMode((640,480))
-font = pygame.font.Font(fontsPath + "countdown.ttf", 150)
-
-
-black = (0,0,0)
-text1 = font.render("Ready", 1, (255,0,0))
-text2 = font.render("Steady", 1, (255,0,0))
-text3 = font.render("Relax", 1, (255,0,0))
-pygame.mixer.music.load(audioPath + 'countdown.ogg')
-
-screen.fill(black)
-pygame.mixer.music.play(0)
-pygame.time.delay(100)
-screen.blit(text1, (130,150))
-pygame.display.flip()
-pygame.time.delay(1000)
-
-screen.fill(black)
-pygame.mixer.music.play(0)
-pygame.time.delay(100)
-screen.blit(text2, (80,150))
-pygame.display.flip()
-pygame.time.delay(1000)
-
-screen.fill(black)
-pygame.mixer.music.play(0)
-pygame.time.delay(100)
-screen.blit(text3, (130,150))
-pygame.display.flip()
-pygame.time.delay(1000)
-
-
-# Loading background music
-	
-pygame.mixer.music.load(audioPath + 'back.ogg')
-pygame.mixer.music.play(-1)
 
 p1 = None
 p2 = None
 dir1 = [1, 0]
-dir2 = [-1, 0]
+dir2 = [1, 0]
 images = []
 
-t_anim = 0.15
+t_anim = 0.2
 steps_to_alter_maze = 5
 
 playBot1 = False
@@ -294,12 +305,66 @@ playBot2 = False
 showBotPath1 = False
 showBotPath2 = False
 
+
+
+pygame.init()
+
+pygame.display.set_caption(GAME_TITLE)
+
+pygame.mixer.init()
+
+# La intro sólo se muestra si se abre la secuencia entera de niveles
+introEnabled = (len(levelFiles) > 1)
+
+if introEnabled:
+	# TODO: Enseñarle a Manu arrays
+
+	# Countdown
+
+	screen = changeDisplayMode((640,480))
+	font = pygame.font.Font(fontsPath + "countdown.ttf", 150)
+
+	black = (0,0,0)
+	text1 = font.render("Ready", 1, (255,0,0))
+	text2 = font.render("Steady", 1, (255,0,0))
+	text3 = font.render("Relax", 1, (255,0,0))
+	pygame.mixer.music.load(audioPath + 'countdown.ogg')
+
+	screen.fill(black)
+	pygame.mixer.music.play(0)
+	pygame.time.delay(100)
+	screen.blit(text1, (130,150))
+	pygame.display.flip()
+	pygame.time.delay(1000)
+
+	screen.fill(black)
+	pygame.mixer.music.play(0)
+	pygame.time.delay(100)
+	screen.blit(text2, (80,150))
+	pygame.display.flip()
+	pygame.time.delay(1000)
+
+	screen.fill(black)
+	pygame.mixer.music.play(0)
+	pygame.time.delay(100)
+	screen.blit(text3, (130,150))
+	pygame.display.flip()
+	pygame.time.delay(2500)
+
+
+# Loading background music
+
+# TODO: Considerar si tenemos este problema, con esta solución:
+# http://stackoverflow.com/a/13361935/1112654
+pygame.mixer.music.load(audioPath + 'back.ogg')
+pygame.mixer.music.set_volume(0.8)
+pygame.mixer.music.play(-1)
+
+
+
 steps = 0
 
-bulletMode = True
-
 levelIndex = 0
-
 
 while True:
 	wallsize = 32
@@ -324,19 +389,12 @@ while True:
 	plaza = loadImage("plaza.png")
 	
 	levelFile = levelsPath + levelFiles[levelIndex]
-	print "Loading " + levelFile
-	with open(levelFile) as f:
-		maze = f.read()
-	m = []
-	loadMaze(maze)
-	dx, dy = [0, 0, 1, -1], [1, -1, 0, 0]
-	for i in xrange(4):
-		if empty(p1[0]+dx[i], p1[1]+dy[i]): dir1 = [dx[i], dy[i]]
-		if empty(p2[0]+dx[i], p2[1]+dy[i]): dir2 = [dx[i], dy[i]]
+	loadLevel(levelFile)
 	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
 	print "Screen size:", size
-
+	
+	pygame.display.set_caption(GAME_TITLE + " - %d: %s" % (levelIndex + 1, levelFile))
 	screen = changeDisplayMode(size)
 	keys = set()
 
@@ -376,49 +434,70 @@ while True:
 			if playBot1: path1 = bfs_p1_to_p2()
 			if playBot2: path2 = bfs_p2_to_p1()
 			
-			if playBot2:
-				next_p2 = list(path2[0])
-				if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
-				p2 = next_p2
-			else:
-				if pygame.K_w in keys:
-					if empty(p2[0], p2[1]-1):
-						dir2 = [0, -1]
-						p2[1] -= 1
-				elif pygame.K_s in keys:
-					if empty(p2[0], p2[1]+1):
-						dir2 = [0, 1]
-						p2[1] += 1
-				elif pygame.K_d in keys:
-					if empty(p2[0]+1, p2[1]):
-						dir2 = [1, 0]
-						p2[0] += 1
-				elif pygame.K_a in keys:
-					if empty(p2[0]-1, p2[1]):
-						dir2 = [-1, 0]
-						p2[0] -= 1
+			#==========================
+			# Controllers
+			#==========================
 			
+			# Bot 1
 			if playBot1:
 				next_p1 = list(path1[0])
 				if next_p1 != p1: dir1 = [next_p1[0] - p1[0], next_p1[1] - p1[1]]
 				p1 = next_p1
 			else:
-				if pygame.K_UP in keys:
-					if empty(p1[0], p1[1]-1):
-						dir1 = [0, -1]
-						p1[1] -= 1
-				elif pygame.K_DOWN in keys:
-					if empty(p1[0], p1[1]+1):
-						dir1 = [0, 1]
-						p1[1] += 1
-				elif pygame.K_RIGHT in keys:
-					if empty(p1[0]+1, p1[1]):
-						dir1 = [1, 0]
-						p1[0] += 1
-				elif pygame.K_LEFT in keys:
-					if empty(p1[0]-1, p1[1]):
-						dir1 = [-1, 0]
-						p1[0] -= 1
+				# Player 1 - Always moving
+				if keepMoving:
+					next_p1 = getLeft(p1, dir1) if pygame.K_LEFT in keys else getRight(p1, dir1)
+					if next_p1 != p1: dir1 = [next_p1[0] - p1[0], next_p1[1] - p1[1]]
+					p1 = next_p1
+				
+				# Player 1 - Keys
+				else:
+					if pygame.K_UP in keys:
+						if empty(p1[0], p1[1]-1):
+							dir1 = [0, -1]
+							p1[1] -= 1
+					elif pygame.K_DOWN in keys:
+						if empty(p1[0], p1[1]+1):
+							dir1 = [0, 1]
+							p1[1] += 1
+					elif pygame.K_RIGHT in keys:
+						if empty(p1[0]+1, p1[1]):
+							dir1 = [1, 0]
+							p1[0] += 1
+					elif pygame.K_LEFT in keys:
+						if empty(p1[0]-1, p1[1]):
+							dir1 = [-1, 0]
+							p1[0] -= 1
+			
+			# Bot 2
+			if playBot2:
+				next_p2 = list(path2[0])
+				if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
+				p2 = next_p2
+			else:
+				# Player 1 - Always moving
+				if keepMoving:
+					next_p2 = getRight(p2, dir2) if pygame.K_RIGHT in keys else getLeft(p2, dir2)
+					if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
+					p2 = next_p2
+				else:
+					# Player 1 - Keys
+					if pygame.K_w in keys:
+						if empty(p2[0], p2[1]-1):
+							dir2 = [0, -1]
+							p2[1] -= 1
+					elif pygame.K_s in keys:
+						if empty(p2[0], p2[1]+1):
+							dir2 = [0, 1]
+							p2[1] += 1
+					elif pygame.K_d in keys:
+						if empty(p2[0]+1, p2[1]):
+							dir2 = [1, 0]
+							p2[0] += 1
+					elif pygame.K_a in keys:
+						if empty(p2[0]-1, p2[1]):
+							dir2 = [-1, 0]
+							p2[0] -= 1
 			
 			if abs(pangle1 + 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 += 360
 			elif abs(pangle1 - 360 - angleFromDir(dir1)) < abs(pangle1 - angleFromDir(dir1)): pangle1 -= 360
@@ -497,7 +576,8 @@ while True:
 		
 	levelIndex += 1
 	if levelIndex == len(levelFiles):
-		break
+		if len(levelFiles) > 1: break
+		else: levelIndex = 0
 
 while True:
 	for event in pygame.event.get():
