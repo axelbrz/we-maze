@@ -10,9 +10,7 @@ def bfs(ini, end):
 	dx = [0, 0, -1, 1]
 	dy = [-1, 1, 0, 0]
 	
-	if ini == end:
-		print "Done"
-		return []
+	if ini == end: return [ini]
 	
 	q = [ini]
 	used = set(ini)
@@ -60,8 +58,8 @@ def loadMaze(maze):
 		edificio_6,
 		plaza,
 	]
-	print "--"
 	m = maze.split("\n")[0:-1]
+	print "-" * len(m[0])
 	for y in xrange(len(m)):
 		x1 = m[y].find("1")
 		x2 = m[y].find("2")
@@ -71,9 +69,9 @@ def loadMaze(maze):
 		m[y] = m[y].replace("2", " ")
 		images.append([random.choice(imagePool) for x in xrange(len(m[0]))])
 		print "".join(m[y])
-	print "--"
-	print "Dimensiones", (len(m[0]), len(m))
-	print p1, p2
+	print "-" * len(m[0])
+	print "Dimensions:", (len(m[0]), len(m))
+	print "Players:", p1, p2
 	m = [[c for c in row] for row in m]
 
 def empty(x, y):
@@ -101,9 +99,7 @@ def dist(a, b):
 def alterMaze():
 	path = bfs_p1_to_p2() # minpath
 	if len(path) < 5: # VARIABLE DE CONFIG!!
-		print "Maze not altered as they almost win..."
 		return
-	print "Altering maze..."
 	
 	for i in xrange(100):
 		torem = 1 + int(random.random() * (len(m[0])-1)), 1 + int(random.random() * (len(m)-1)) # x, y
@@ -191,6 +187,33 @@ def angleFromDir(dir):
 	if dir[0] == 0 and dir[1] == -1: return -90
 	if dir[0] == -1 and dir[1] == 0: return 0
 
+def getScreenResolution():
+	try:
+		import gtk
+		window = gtk.Window()
+		screen = window.get_screen()
+		monitors = []
+		nmons = screen.get_n_monitors()
+		for m in range(nmons): mg = screen.get_monitor_geometry(m)
+		monitors.append(mg)
+		curmon = screen.get_monitor_at_window(screen.get_active_window())
+		x, y, width, height = monitors[curmon]
+		return (width,height)
+	except:
+		try:
+			import ctypes
+			user32 = ctypes.windll.user32
+			return user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)
+		except:
+			pass
+	return 1024, 768
+
+def changeDisplayMode(size):
+	os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % ((SCREEN_RESOLUTION[0] - size[0]) / 2, (SCREEN_RESOLUTION[1] - size[1]) / 2)
+	return pygame.display.set_mode(size)
+
+SCREEN_RESOLUTION = getScreenResolution()
+
 imagesPath = "images/"
 audioPath = "audio/"
 fontsPath = "fonts/"
@@ -210,8 +233,9 @@ else:
 print "Levels:", levelFiles
 
 pygame.init()
+
 pygame.display.set_caption('We Maze!')
-screen = pygame.display.set_mode((640,480))
+screen = changeDisplayMode((640,480))
 font = pygame.font.Font(fontsPath + "countdown.ttf", 500)
 
 
@@ -253,6 +277,7 @@ bulletMode = True
 
 levelIndex = 0
 
+
 while True:
 	wallsize = 32
 	
@@ -276,7 +301,7 @@ while True:
 	plaza = loadImage("plaza.png")
 	
 	levelFile = levelsPath + levelFiles[levelIndex]
-	print levelFile
+	print "Loading " + levelFile
 	with open(levelFile) as f:
 		maze = f.read()
 	m = []
@@ -287,9 +312,9 @@ while True:
 		if empty(p2[0]+dx[i], p2[1]+dy[i]): dir2 = [dx[i], dy[i]]
 	
 	size = width, height = wallsize * len(m[0]), wallsize * len(m)
-	print "Screen size", size
+	print "Screen size:", size
 
-	screen = pygame.display.set_mode(size)
+	screen = changeDisplayMode(size)
 	keys = set()
 
 	d1 = p1[:]
@@ -304,7 +329,8 @@ while True:
 	t_prev = time.time()
 	path1 = []
 	path2 = []
-	print "New game..."
+	won = False
+	collision = False
 	while True:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -315,19 +341,22 @@ while True:
 					sys.exit()
 			if event.type == pygame.KEYUP:
 				keys.discard(event.key)
-				
+		
 		t_curr = time.time()
 		if t_curr - t_prev >= t_anim:
+			if won: break
 			pp1 = p1[:]
 			pp2 = p2[:]
 			pangle1 = angleFromDir(dir1)
 			pangle2 = angleFromDir(dir2)
 			
-			path2 = bfs_p2_to_p1()
+			if playBot1: path1 = bfs_p1_to_p2()
+			if playBot2: path2 = bfs_p2_to_p1()
+			
 			if playBot2:
-				if len(path2) <= 1:
-					break
-				p2 = list(path2[0])
+				next_p2 = list(path2[0])
+				if next_p2 != p2: dir2 = [next_p2[0] - p2[0], next_p2[1] - p2[1]]
+				p2 = next_p2
 			else:
 				if pygame.K_w in keys:
 					if empty(p2[0], p2[1]-1):
@@ -346,11 +375,10 @@ while True:
 						dir2 = [-1, 0]
 						p2[0] -= 1
 			
-			path1 = bfs_p1_to_p2()
 			if playBot1:
-				if len(path1) <= 1:
-					break
-				p1 = list(path1[0])
+				next_p1 = list(path1[0])
+				if next_p1 != p1: dir1 = [next_p1[0] - p1[0], next_p1[1] - p1[1]]
+				p1 = next_p1
 			else:
 				if pygame.K_UP in keys:
 					if empty(p1[0], p1[1]-1):
@@ -378,6 +406,10 @@ while True:
 			if steps % steps_to_alter_maze == 0:
 				alterMaze()
 			
+			collision = (dist(p1, p2) == 1 and dir1 == [-dir2[0], -dir2[1]] and list(p2) == [p1[0]-dir1[0], p1[1]-dir1[1]] and list(p1) == [p2[0]-dir2[0], p2[1]-dir2[1]])
+			if dist(p1, p2) == 0 or collision:
+				won = True
+			
 			t_prev = t_curr
 			
 		else:
@@ -386,6 +418,10 @@ while True:
 			
 			d2[0] = ((t_curr - t_prev) / t_anim) * p2[0] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[0]
 			d2[1] = ((t_curr - t_prev) / t_anim) * p2[1] + ((t_anim - (t_curr - t_prev)) / t_anim) * pp2[1]
+			
+			if won and collision:
+				d1 = [(d1[0]+pp1[0])/2., (d1[1]+pp1[1])/2.]
+				d2 = [(d2[0]+pp2[0])/2., (d2[1]+pp2[1])/2.]
 			
 			if abs(pangle1 - angleFromDir(dir1)) < 180:
 				p1_ang = ((t_curr - t_prev) / t_anim) * angleFromDir(dir1) + ((t_anim - (t_curr - t_prev)) / t_anim) * pangle1
@@ -435,8 +471,7 @@ while True:
 		screen.blit(rotated_player_2, (p2_pos[0], p2_pos[1], asfalto_size[0], asfalto_size[1]))
 		
 		pygame.display.flip()
-		if dist(p1, p2) <= 1:
-			break # Winning condition
+		
 	levelIndex += 1
 	if levelIndex == len(levelFiles):
 		break
