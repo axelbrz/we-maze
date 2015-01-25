@@ -1,5 +1,4 @@
-Músico: Leandro Bordino
-Programador Senior (?: Axel Brzostowski
-Programador Junior (?: Manuel Parma
+Music: Leandro Bordino and Salazar Riquelme Federico Agustin
+Main Programmer: Axel Brzostowski
+Junior Programmer: Manuel Parma
 Level Designer: Blas Ingiulla
-Artistas: Blas, Manu y Axel
