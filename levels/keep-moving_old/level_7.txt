@@ -1,5 +1,5 @@
 XXXXXXXXXXXXXXXXX
-X1          X   X
+X2          X   X
 X X XXXXX X X X X
 X X X     X   X X
 X X X XXXXXXXXX X
@@ -7,14 +7,14 @@ X   X         X X
 XXX X X XXXXX X X
 X X X X X   X X X
 X X     X X   X X
-X XXXXX . XXXXX X
+X XXXXX X XXXXX X
 X       X X   X X
 XXXXXXXXX X X XXX
 X   X     X X X X
 X X XXXXX X X X X
 X X X     X X   X
 X XXX XXXXX XXXXX
-X              2X
+X              1X
 XXXXXXXXXXXXXXXXX
 
 -1 0 #

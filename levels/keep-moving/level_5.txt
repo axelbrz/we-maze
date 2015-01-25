@@ -1,12 +1,12 @@
-XXXXXXXXXXXXXXXXXXXXXXXXX
-X1                      X
-X XXX X XXX X XXX X XXX X
-X     X     X     X     X
-XXXX XXX X XXX X XXX XXXX
-X     X     X     X     X
-X XXX X XXX X XXX X XXX X
-X                     2 X
-XXXXXXXXXXXXXXXXXXXXXXXXX
+OOOOOOOOOOOOO
+O 1   O     O
+O O O O O O O
+O        S  O
+OOO O . O OOO
+O  S      2 O
+O O O O O O O
+O     O     O
+OOOOOOOOOOOOO
 
 0 1 # player 1 initial direction
-0 1 # player 2 initial direction
+0 -1 # player 2 initial direction

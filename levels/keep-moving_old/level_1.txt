@@ -1,7 +1,7 @@
 XXXXXXXXXXXXX
-X 1         X
-X O O . O O X
-X         2 X
+X1         2X
+X O OO.OO O X
+X           X
 XXXXXXXXXXXXX
 
 0 -1 # player 1 initial direction

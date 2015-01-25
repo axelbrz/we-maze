@@ -1,8 +1,8 @@
-XXXXXXXXXXXXX
-X 1         X
-X O O O O O X
-X         2 X
-XXXXXXXXXXXXX
+OOOOOOOOOOOOOOO
+O 1 O         O
+O O . OO S OO O
+O S O 2       O
+OOOOOOOOOOOOOOO
 
-0 -1 # player 1 initial direction
-0 -1 # player 2 initial direction
+-1 0 # player 1 initial direction
+1 0 # player 2 initial direction
