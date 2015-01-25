@@ -268,7 +268,7 @@ GAME_TITLE = "We Maze!"
 
 SCREEN_RESOLUTION = getScreenResolution()
 
-keepMoving = True
+keepMoving = False
 # TODO: Hacer bots para keepMoving!
 
 imagesPath = "images/"
