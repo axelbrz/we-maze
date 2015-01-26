@@ -7,11 +7,10 @@ Two friends on bikes are looking for each other in the complex city of Buenos Ai
 ## Instructions
 
 1. Install python 2.7.9 from: https://www.python.org/downloads/
-2. Install pygame 1.9.1 from: http://www.pygame.org/download.shtml
-3. run:
-```
-python wemaze.py
-```
+2. Install pygame 1.9.1 (`pygame-1.9.1.win32-py2.7.msi` for Windows) from: http://www.pygame.org/download.shtml
+3. Click on `Download ZIP` at the right of this page and extract the content somewhere.
+4. Double click on wemaze.py (or run `python wemaze.py` from console)
+5. Enjoy! :)
 
 ## Credits
 
