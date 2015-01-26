@@ -1,6 +1,6 @@
 # We Maze!
 
-Two friends on bikes are looking for each other in the complex city of Buenos Aires. Help them to meet!
+Two friends on bikes are looking for each other in the complex city of Buenos Aires. Annoying cars, subway stations and moving buildings are waiting for you! Help them to meet!
 
 <img src="http://globalgamejam.org/sites/default/files/styles/game_content__wide/public/games/screenshots/screen_69.png?itok=SmpGL8aS" alt="We Maze image" width="600px"></img>
 
