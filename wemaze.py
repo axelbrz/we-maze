@@ -334,6 +334,8 @@ GAME_TITLE = "We Maze!"
 
 SCREEN_RESOLUTION = getScreenResolution()
 
+wallsize = 32
+
 keepMoving = True
 # TODO: Hacer bots para keepMoving!
 
