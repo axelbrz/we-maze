@@ -273,7 +273,7 @@ def getScreenResolution():
 
 def changeDisplayMode(size):
 	os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % ((SCREEN_RESOLUTION[0] - size[0]) / 2, (SCREEN_RESOLUTION[1] - size[1]) / 2)
-	pygame.display.set_icon(loadImage("icon.png"))
+	pygame.display.set_icon(pygame.transform.rotate(loadImage("player_red.png"), 180))
 	return pygame.display.set_mode(size)
 
 def getRight(p, d, enSubte):
