@@ -6,7 +6,7 @@ Two friends on bikes are looking for each other in the complex city of Buenos Ai
 
 ## How to play
 
-We Maze! is multiplayer:
+We Maze! is multiplayer (unless you are crazy and want to control both players at the same time =):
 - Player 1 always turns right unless the left key is being pressed.
 - Player 2 always turns left unless the right key is being pressed.
 
