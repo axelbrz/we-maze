@@ -10,6 +10,8 @@ We Maze! is multiplayer (unless you are crazy and want to control both players a
 - Player 1 always turns right unless the left key is being pressed.
 - Player 2 always turns left unless the right key is being pressed.
 
+Annoying cars, subway stations and moving buildings are waiting for you!
+
 ## Installation Instructions
 
 1. Install Python 2.7.9 from: https://www.python.org/downloads/
