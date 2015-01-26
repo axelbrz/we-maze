@@ -368,7 +368,7 @@ dir2 = [1, 0]
 dirc = []
 images = []
 
-t_anim = 0.2
+t_anim = 0.3
 steps_to_alter_maze = 5
 
 playBot1 = False
@@ -385,8 +385,7 @@ pygame.display.set_caption(GAME_TITLE)
 pygame.mixer.init()
 
 # TODO: Repeat when finished!
-#streetSound = pygame.mixer.Sound(audioPath + 'street_1.ogg')
-streetSound = pygame.mixer.Sound(audioPath + 'street_3.ogg')
+streetSound = pygame.mixer.Sound(audioPath + 'street.ogg')
 streetSound.set_volume(0.3)
 streetSound.play(-1)
 
