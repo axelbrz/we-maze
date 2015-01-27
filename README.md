@@ -37,7 +37,8 @@ Annoying cars, subway stations and moving buildings are waiting for you!
 
 ## Credits
 
-- **Music**: Leandro Bordino &amp; Salazar Riquelme Federico Agustin
+- **Gameplay Music**: Leandro Bordino
+- **Credits Music**: Salazar Riquelme Federico Agustin
 - **Main Programmer**: Axel Brzostowski
 - **Junior Programmer**: Manuel Parma
 - **Level Designer**: Blas Ingiulla
