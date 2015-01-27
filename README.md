@@ -16,11 +16,22 @@ Annoying cars, subway stations and moving buildings are waiting for you!
 
 ## Installation Instructions
 
+### Method 1 (easy one): Installation from the official page
+
+1. Enter http://globalgamejam.org/2015/games/we-maze and download `WeMaze_exec.zip`
+2. Extract the content of `WeMaze_exec.zip` somewhere.
+3. Install `python-2.7.9.msi`   (if python 2.7 is not already installed)
+4. Install `pygame-1.9.1.win32-py2.7.msi`   (if pygame is not already installed)
+5. Double click on `wemaze.py`
+6. **Enjoy! :)**
+
+### Method 2: I won't run executable files from an unknown zip:
+
 1. Install Python 2.7.9 from: https://www.python.org/downloads/
 2. Install Pygame 1.9.1 (`pygame-1.9.1.win32-py2.7.msi` for Windows) from: http://www.pygame.org/download.shtml
 3. Click on `Download ZIP` at the right of this page and extract the content somewhere.
-4. Double click on wemaze.py (or run `python wemaze.py` from console)
-5. Enjoy! :)
+4. Double click on `wemaze.py` (or run `python wemaze.py` from console)
+5. **Enjoy! :)**
 
 ## Credits
 
