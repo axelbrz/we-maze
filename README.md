@@ -4,9 +4,9 @@ Two friends on bikes are looking for each other in the complex city of Buenos Ai
 
 Annoying cars, subway stations and moving buildings are waiting for you!
 
-http://globalgamejam.org/2015/games/we-maze
-
 <img src="http://globalgamejam.org/sites/default/files/styles/game_content__wide/public/games/screenshots/screen_69.png?itok=SmpGL8aS" alt="We Maze image" width="600px"></img>
+
+**Official GGJ15 page**: http://globalgamejam.org/2015/games/we-maze
 
 ## How to play
 
@@ -41,3 +41,5 @@ Annoying cars, subway stations and moving buildings are waiting for you!
 - **Main Programmer**: Axel Brzostowski
 - **Junior Programmer**: Manuel Parma
 - **Level Designer**: Blas Ingiulla
+
+Made for the <a href="http://globalgamejam.org/">Global Game Jam 2015</a> @ <a href="http://globalgamejam.org/2015/jam-sites/image-campus">Image Campus</a>, Buenos Aires, Argentina.
